@@ -1,109 +1,47 @@
 #include <stdio.h>
 #include <stdarg.h>
+#include "main.h"
 
 /**
- * _printf - Printf function
- * @format: format.
- * Return: Printed chars.
+ * _printf - Custom implementation of the printf function for formatted output.
+ *
+ * This function takes a format string and a variable number of arguments, and
+ * it produces formatted output to the standard output (file descriptor 1).
+ * The format string may contain conversion specifiers starting with '%', which
+ * are replaced by the corresponding argument values. The supported conversion
+ * specifiers are 'c' for characters, 's' for strings, '%' for a literal '%',
+ * 'd' and 'i' for signed integers, 'u' for unsigned integers (decimal), 'o'
+ * for unsigned integers (octal), 'x' for unsigned integers (lowercase
+ * hexadecimal), 'X' for unsigned integers (uppercase hexadecimal), and 'b' for
+ * unsigned integers (binary).
+ *
+ * @format: The format string specifying the output format.
+ * Return: The number of characters written to the standard output.
  */
 int _printf(const char *format, ...)
 {
-    va_list ap;
-    int char_count = 0;
+	va_list args;
+	int char_count = 0;
 
-    va_start(ap, format);
-
-    while (*format != '\0')
-    {
-        if (*format != '%')
-        {
-            putchar(*format);
-            char_count++;
-        }
-        else
-        {
-            format++;
-            switch (*format)
-            {
-                case 'c':
-                {
-                    int c = va_arg(ap, int);
-                    putchar(c);
-                    char_count++;
-                    break;
-                }
-                case 's':
-                {
-                    char *s = va_arg(ap, char *);
-                    while (*s != '\0')
-                    {
-                        putchar(*s);
-                        char_count++;
-                        s++;
-                    }
-                    break;
-                }
-                case 'd':
-                case 'i':
-                {
-                    int num = va_arg(ap, int);
-                    printf("%d", num);
-                    char_count++;
-                    break;
-                }
-                case 'u':
-                {
-                    unsigned int num = va_arg(ap, unsigned int);
-                    printf("%u", num);
-                    char_count++;
-                    break;
-                }
-                case 'o':
-                {
-                    unsigned int num = va_arg(ap, unsigned int);
-                    printf("%o", num);
-                    char_count++;
-                    break;
-                }
-                case 'x':
-                {
-                    unsigned int num = va_arg(ap, unsigned int);
-                    printf("%x", num);
-                    char_count++;
-                    break;
-                }
-                case 'X':
-                {
-                    unsigned int num = va_arg(ap, unsigned int);
-                    printf("%X", num);
-                    char_count++;
-                    break;
-                }
-                case 'p':
-                {
-                    void *ptr = va_arg(ap, void *);
-                    printf("%p", ptr);
-                    char_count++;
-                    break;
-                }
-                case '%':
-                {
-                    putchar('%');
-                    char_count++;
-                    break;
-                }
-                default:
-                {
-                    putchar('%');
-                    putchar(*format);
-                    char_count += 2;
-                    break;
-                }
-            }
-        }
-        format++;
-    }
-
-    va_end(ap);
-    return char_count;
+	if (format == NULL)
+	{
+		return (-1);
+	}
+	va_start(args, format);
+	while (*format != '\0')
+	{
+		if (*format == '%')
+		{
+			format++;
+            char_count += select(*format, args);
+		}
+		else
+		{
+			putchar(*format);
+			char_count++;
+		}
+		format++;
+	}
+	va_end(args);
+	return (char_count);
 }
